@@ -3,7 +3,6 @@ import httpStatus, { HttpStatusClasses } from 'http-status';
 
 /** Http response. */
 export namespace HttpResponse {
-
   /** Return success response. */
   export function success<T>(res: Response, data: T, status = httpStatus.OK) {
     return res.status(status).json(data);

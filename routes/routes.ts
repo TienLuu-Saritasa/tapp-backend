@@ -1,5 +1,3 @@
 import noteRoutes from './note';
 
-export default [
-    noteRoutes
-];
+export default [noteRoutes];

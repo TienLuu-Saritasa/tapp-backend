@@ -1,5 +1,6 @@
-import { Server } from 'http';
+import cors from 'cors';
 import express, { Application } from 'express';
+import { Server } from 'http';
 import { Database } from '../interfaces/database';
 
 export interface AppConstructor {
@@ -28,6 +29,7 @@ export class ExpressBase {
     });
   }
   private middlewares(middleWares: AppConstructor): void {
+    this.app.use(cors());
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));
 
