@@ -1,5 +1,7 @@
+import { Request, Response } from 'express';
 import CrudController from '../../controllers/base.controller';
 import { Project } from '../../interfaces/project';
+import { HttpResponse } from '../../utils/response';
 import { ProjectModel } from './project.model';
 
 export class ProjectController extends CrudController<Project> {
@@ -12,10 +14,14 @@ export class ProjectController extends CrudController<Project> {
   }
 
   private initializeRoutes(): void {
+  
     this.router.get(this.path, this.getAll);
     this.router.get(`${this.path}/:id`, this.getById);
     this.router.post(this.path, this.create);
     this.router.put(`${this.path}/:id`, this.update);
     this.router.delete(`${this.path}/:id`, this.deleteById);
+    this.router.get(`${this.path}/abc/asc`, (req: Request, res: Response): Response => {
+      return HttpResponse.success(res, {a: 'asdasd'});
+    });
   }
 }
