@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import httpStatus, { HttpStatusClasses } from 'http-status';
+import httpStatus from 'http-status';
 
 /** Http response. */
 export namespace HttpResponse {

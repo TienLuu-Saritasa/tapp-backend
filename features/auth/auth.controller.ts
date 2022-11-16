@@ -7,7 +7,7 @@ import { UserModel } from './auth.model';
 export class AuthController {
   public readonly path = '/auth';
   public readonly router = express.Router();
-  private readonly auth = UserModel;
+  private readonly userModel = UserModel;
   private readonly saltRounds = 10;
 
   constructor() {
@@ -21,7 +21,7 @@ export class AuthController {
 
   private login = async (req: express.Request, res: express.Response) => {
     const { username, password }: Login = req.body;
-    const user = await this.auth.findOne({ username });
+    const user = await this.userModel.findOne({ username });
     if (!user) {
       return HttpResponse.badRequest(res, { message: 'User name does not exist' });
     }
@@ -35,7 +35,7 @@ export class AuthController {
   private register = async (req: express.Request, res: express.Response) => {
     const { username, password, confirmPassword }: Register = req.body;
 
-    const user = await this.auth.findOne({ username });
+    const user = await this.userModel.findOne({ username });
     if (user) {
       return HttpResponse.badRequest(res, { message: 'Username has been used' });
     }
@@ -43,7 +43,7 @@ export class AuthController {
       return HttpResponse.badRequest(res, { message: 'Password not matched' });
     }
     const hashPassword = await bcrypt.hash(password, this.saltRounds);
-    const newUser = new this.auth({
+    const newUser = new this.userModel({
       username,
       password: hashPassword,
     });

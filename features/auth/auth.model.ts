@@ -1,13 +1,9 @@
-import * as mongoose from "mongoose";
+import mongoose from 'mongoose';
 import { User } from '../../interfaces/auth';
 
-const userSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema<User>({
   username: String,
-  password: String
+  password: String,
 });
 
-export const UserModel = mongoose.model<User & mongoose.Document>(
-  "User",
-  userSchema,
-  "users"
-);
+export const UserModel = mongoose.model<User>('User', userSchema, 'users');
