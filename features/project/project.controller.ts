@@ -20,8 +20,5 @@ export class ProjectController extends CrudController<Project> {
     this.router.post(this.path, this.create);
     this.router.put(`${this.path}/:id`, this.update);
     this.router.delete(`${this.path}/:id`, this.deleteById);
-    this.router.get(`${this.path}/abc/asc`, (req: Request, res: Response): Response => {
-      return HttpResponse.success(res, {a: 'asdasd'});
-    });
   }
 }
