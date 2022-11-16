@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import { User } from '../../interfaces/auth';
 
 const userSchema = new mongoose.Schema<User>({
-  username: String,
+  email: String,
   password: String,
 });
 

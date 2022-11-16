@@ -20,10 +20,10 @@ export class AuthController {
   }
 
   private login = async (req: Request, res: Response): Promise<Response> => {
-    const { username, password }: Login = req.body;
-    const user = await this.userModel.findOne({ username });
+    const { email, password }: Login = req.body;
+    const user = await this.userModel.findOne({ email });
     if (!user) {
-      return HttpResponse.badRequest(res, { message: 'User name does not exist' });
+      return HttpResponse.badRequest(res, { message: 'Email does not exist' });
     }
     const isPasswordCorrect = await bcrypt.compare(password.toString(), user.password.toString());
     if (!isPasswordCorrect) {
@@ -33,18 +33,23 @@ export class AuthController {
   };
 
   private register = async (req: Request, res: Response): Promise<Response> => {
-    const { username, password, confirmPassword }: Register = req.body;
+    const { email, password, confirmPassword }: Register = req.body;
 
-    const user = await this.userModel.findOne({ username });
+    const user = await this.userModel.findOne({ email });
+    
+    if (email == null) {
+      return HttpResponse.badRequest(res, { message: 'Please enter email' });
+    }
+
     if (user) {
-      return HttpResponse.badRequest(res, { message: 'Username has been used' });
+      return HttpResponse.badRequest(res, { message: 'Email has been used' });
     }
     if (password !== confirmPassword) {
       return HttpResponse.badRequest(res, { message: 'Password not matched' });
     }
     const hashPassword = await bcrypt.hash(password, this.saltRounds);
     const newUser = new this.userModel({
-      username,
+      email,
       password: hashPassword,
     });
     await newUser.save();
