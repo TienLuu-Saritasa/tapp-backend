@@ -1,4 +1,4 @@
-import * as express from 'express';
+import { Request, Response, Router } from 'express';
 import bcrypt from 'bcrypt';
 import { Login, Register, User } from '../../interfaces/auth';
 import { HttpResponse } from '../../utils/response';
@@ -6,7 +6,7 @@ import { UserModel } from './auth.model';
 
 export class AuthController {
   public readonly path = '/auth';
-  public readonly router = express.Router();
+  public readonly router = Router();
   private readonly userModel = UserModel;
   private readonly saltRounds = 10;
 
@@ -14,12 +14,12 @@ export class AuthController {
     this.initializeRoutes();
   }
 
-  private initializeRoutes() {
+  private initializeRoutes(): void {
     this.router.post(`${this.path}/login`, this.login);
     this.router.post(`${this.path}/register`, this.register);
   }
 
-  private login = async (req: express.Request, res: express.Response) => {
+  private login = async (req: Request, res: Response): Promise<Response> => {
     const { username, password }: Login = req.body;
     const user = await this.userModel.findOne({ username });
     if (!user) {
@@ -32,7 +32,7 @@ export class AuthController {
     return HttpResponse.success<User>(res, user);
   };
 
-  private register = async (req: express.Request, res: express.Response) => {
+  private register = async (req: Request, res: Response): Promise<Response> => {
     const { username, password, confirmPassword }: Register = req.body;
 
     const user = await this.userModel.findOne({ username });

@@ -1,12 +1,12 @@
 interface User {
-  username: string;
-  password: string;
+  readonly username: string;
+  readonly password: string;
 }
 
 type Login = User;
 
 interface Register extends User {
-  confirmPassword: string;
+  readonly confirmPassword: string;
 }
 
 export { Login, Register, User };
