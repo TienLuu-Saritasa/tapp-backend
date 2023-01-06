@@ -14,11 +14,11 @@ export class ExpressBase {
     protected readonly port: number,
     databaseConfigs: Database,
     middleWares: AppConstructor,
-    controllers: AppConstructor
+    controllers: AppConstructor,
   ) {
     this.app = express();
 
-    this.middlewares(middleWares);
+    this.middleware(middleWares);
     this.connectDatabase(databaseConfigs);
     this.routes(controllers);
   }
@@ -28,7 +28,8 @@ export class ExpressBase {
       this.app.use('/api', controller.router);
     });
   }
-  private middlewares(middleWares: AppConstructor): void {
+
+  private middleware(middleWares: AppConstructor): void {
     this.app.use(cors());
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));

@@ -1,7 +1,5 @@
-import { Request, Response } from 'express';
 import CrudController from '../../controllers/base.controller';
 import { Project } from '../../interfaces/project';
-import { HttpResponse } from '../../utils/response';
 import { ProjectModel } from './project.model';
 
 export class ProjectController extends CrudController<Project> {
