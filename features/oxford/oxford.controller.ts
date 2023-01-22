@@ -50,6 +50,7 @@ export class OxfordController {
       const tracauResponse = await axios.get(`https://api.tracau.vn/WBBcwnwQpV89/s/${word}/en`);
       return tracauResponse.data.sentences;
     } catch (error) {
+      console.error(error);
       return [];
     }
   };
