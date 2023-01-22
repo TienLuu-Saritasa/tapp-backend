@@ -31,14 +31,26 @@ export class OxfordController {
           headers: this.envService.getOxfordHeader()
         }
       ));
+      const tracauResponses = words.map(word => this.translatePronunciation(word));
       const oxfordResponsesData = await Promise.all(oxfordResponses);
-      return res.send(oxfordResponsesData.map(response => response.data));
+      const tracauResponsesData = await Promise.all(tracauResponses);
+
+      return res.send(oxfordResponsesData.map((response, index): any => ({ ...response.data, sentences: tracauResponsesData[index] })));
     } catch (error) {
       console.log(error);
       return res.send([{
         results: [],
         word: ''
       }]);
+    }
+  };
+
+  translatePronunciation = async (word: string): Promise<Array<any>> => {
+    try {
+      const tracauResponse = await axios.get(`https://api.tracau.vn/WBBcwnwQpV89/s/${word}/en`);
+      return tracauResponse.data.sentences;
+    } catch (error) {
+      return [];
     }
   };
 }
