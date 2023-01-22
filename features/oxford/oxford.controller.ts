@@ -47,8 +47,12 @@ export class OxfordController {
 
   translatePronunciation = async (word: string): Promise<Array<any>> => {
     try {
-      const tracauResponse = await axios.get(`https://api.tracau.vn/WBBcwnwQpV89/s/${word}/en`);
-      return tracauResponse.data.sentences;
+      if(process.env.ENV === 'development') {
+        const tracauResponse = await axios.get(`https://api.tracau.vn/WBBcwnwQpV89/s/${word}/en`);
+        return tracauResponse.data.sentences;
+      } else {
+        return [];
+      }
     } catch (error) {
       console.error(error);
       return [];
