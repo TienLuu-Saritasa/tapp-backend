@@ -25,29 +25,41 @@ export class OxfordController {
 
     try {
       const words = req.query.words.toString().split(',');
-      const oxfordResponses = words.map(word => axios.get(
+      const oxfordRequests = words.map(word => axios.get(
         `https://od-api.oxforddictionaries.com/api/v2/entries/en-us/${word}?fields=pronunciations`,
         {
           headers: this.envService.getOxfordHeader()
         }
       ));
-      const tracauResponses = words.map(word => this.translatePronunciation(word));
-      const oxfordResponsesData = await Promise.all(oxfordResponses);
-      const tracauResponsesData = await Promise.all(tracauResponses);
+      const tracauRequests = words.map(word => this.translatePronunciation(word));
+      const ozdicRequests = words.map(word => this.getOzdicDictionary(word));
 
-      return res.send(oxfordResponsesData.map((response, index): any => ({ ...response.data, sentences: tracauResponsesData[index] })));
+      const [
+        oxfordData,
+        tracauData,
+        ozdicData
+      ] = await Promise.all([oxfordRequests, tracauRequests, ozdicRequests].map(p => Promise.all(p)));
+
+      return res.send(oxfordData.map((response, index): any => ({
+        ...response.data,
+        sentences: tracauData[index],
+        ozdic: ozdicData[index]
+      })));
+
     } catch (error) {
       console.log(error);
       return res.send([{
         results: [],
-        word: ''
+        word: '',
+        sentences: [],
+        ozdic: null
       }]);
     }
   };
 
   translatePronunciation = async (word: string): Promise<Array<any>> => {
     try {
-      if(process.env.ENV === 'development') {
+      if (process.env.ENV === 'development') {
         const tracauResponse = await axios.get(`https://api.tracau.vn/WBBcwnwQpV89/s/${word}/en`);
         return tracauResponse.data.sentences;
       } else {
@@ -56,6 +68,15 @@ export class OxfordController {
     } catch (error) {
       console.error(error);
       return [];
+    }
+  };
+
+  getOzdicDictionary = async (word: string): Promise<any | null> => {
+    try {
+      const tracauResponse = await axios.get(`https://ozdic.com/collocation/${word}.txt`);
+      return tracauResponse.data;
+    } catch (error) {
+      return null;
     }
   };
 }
