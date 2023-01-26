@@ -40,7 +40,7 @@ export class OxfordController {
 
   private initializeRoutes(): void {
     this.router.get(this.path.concat('search'), this.searchPronunciation);
-    this.router.get(this.path.concat('sheet/:lesson'), this.getDictionariesFromSheet);
+    this.router.get(this.path.concat('lessons/:lesson'), this.getDictionariesFromSheet);
     this.router.get(this.path.concat('lessons'), this.getLessonsController);
   }
 
