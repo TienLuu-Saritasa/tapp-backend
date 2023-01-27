@@ -1,4 +1,4 @@
-import axios, { RawAxiosRequestHeaders } from 'axios';
+import axios, { AxiosError, RawAxiosRequestHeaders } from 'axios';
 import { Request, Response, Router } from 'express';
 import { GoogleAuth } from 'google-auth-library';
 import { google, sheets_v4 } from 'googleapis';
@@ -93,11 +93,8 @@ export class OxfordController {
         ozdic,
       };
 
-      const isExistInOxfordDictionary = oxford.results.length;
-      if (isExistInOxfordDictionary) {
-        const newTour = new DictionaryModel(result);
-        await newTour.save();
-      }
+      const newTour = new DictionaryModel(result);
+      newTour.save();
 
       return result;
 
@@ -135,6 +132,11 @@ export class OxfordController {
       );
       return oxfordResponse.data;
     } catch (error) {
+      if(error instanceof AxiosError) {
+        console.error(error.response?.statusText);
+      } else {
+        console.error(error);
+      }
       return {
         results: [],
         word,
