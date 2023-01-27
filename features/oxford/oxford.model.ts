@@ -27,10 +27,10 @@ const vocabularySchema = new mongoose.Schema<Vocabulary>({
 
 const tracauSchema = new mongoose.Schema<TraCau>({
   _id: Number,
-  fields: [{
+  fields: {
     en: String,
     vi: String,
-  }]
+  }
 });
 
 const oxfordSchema = new mongoose.Schema<Oxford>({
