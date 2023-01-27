@@ -14,8 +14,8 @@ export class EnvService {
 
   public getGoogleCredentials = (): CredentialBody => {
     return {
-      client_email: process.env.GOOGLE_APPLICATION_CREDENTIALS_EMAIL,
-      private_key: process.env.GOOGLE_APPLICATION_CREDENTIALS_PRIVATE_KEY
+      client_email: Buffer.from(process.env.GOOGLE_APPLICATION_CREDENTIALS_EMAIL ?? '', 'base64').toString('ascii'),
+      private_key: Buffer.from(process.env.GOOGLE_APPLICATION_CREDENTIALS_PRIVATE_KEY ?? '', 'base64').toString('ascii')
     };
   };
 

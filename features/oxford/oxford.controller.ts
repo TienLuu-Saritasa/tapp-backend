@@ -92,9 +92,9 @@ export class OxfordController {
         tracau,
         ozdic,
       };
-      
+
       const isExistInOxfordDictionary = oxford.results.length;
-      if(isExistInOxfordDictionary){
+      if (isExistInOxfordDictionary) {
         const newTour = new DictionaryModel(result);
         await newTour.save();
       }
