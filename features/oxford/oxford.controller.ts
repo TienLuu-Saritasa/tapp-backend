@@ -125,28 +125,35 @@ export class OxfordController {
   };
 
   private getOxfordDictionary = async (word: string): Promise<Oxford> => {
+    const regex = new RegExp(/^[\w ]+$/, 'g');
+    const defaultValue = {
+      results: [],
+      word,
+      id: word,
+      metadata: {
+        operation: '',
+        provider: '',
+        schema: '',
+      },
+    };
+
     try {
-      const oxfordResponse = await axios.get<Oxford>(
-        `https://od-api.oxforddictionaries.com/api/v2/entries/en-us/${word}?fields=pronunciations`,
-        { headers: this.oxfordAxiosHeader }
-      );
-      return oxfordResponse.data;
+      if (regex.test(word) === true) {
+        const oxfordResponse = await axios.get<Oxford>(
+          `https://od-api.oxforddictionaries.com/api/v2/entries/en-us/${word}?fields=pronunciations`,
+          { headers: this.oxfordAxiosHeader }
+        );
+        return oxfordResponse.data;
+      } else {
+        return defaultValue;
+      }
     } catch (error) {
-      if(error instanceof AxiosError) {
+      if (error instanceof AxiosError) {
         console.error(error.response?.statusText);
       } else {
         console.error(error);
       }
-      return {
-        results: [],
-        word,
-        id: word,
-        metadata: {
-          operation: '',
-          provider: '',
-          schema: '',
-        },
-      };
+      return defaultValue;
     }
   };
 
