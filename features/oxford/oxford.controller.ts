@@ -3,7 +3,8 @@ import { Request, Response, Router } from 'express';
 import { GoogleAuth } from 'google-auth-library';
 import { google, sheets_v4 } from 'googleapis';
 import { Dictionary } from '../../interfaces/dictionary';
-import { Oxford } from '../../interfaces/oxford';
+import { Oxford, OxfordResponse } from '../../interfaces/oxford';
+import { Thesaurus } from '../../interfaces/thesaurus';
 import { TraCau } from '../../interfaces/tracau';
 import { EnvService } from '../../services/env.service';
 import { DictionaryModel } from './oxford.model';
@@ -24,9 +25,12 @@ interface Lesson {
 export class OxfordController {
   protected readonly path = '/oxford/';
   protected readonly router = Router();
+
+  private readonly oxfordApiUrl: string = 'https://od-api.oxforddictionaries.com/api/v2';
   private readonly envService = new EnvService();
   private readonly googleSheetService: sheets_v4.Sheets;
   private readonly oxfordAxiosHeader: RawAxiosRequestHeaders;
+  private readonly findWordsCache: Record<string, OxfordResponse<Thesaurus>> = {};
 
   public constructor() {
     this.initializeRoutes();
@@ -40,6 +44,7 @@ export class OxfordController {
 
   private initializeRoutes(): void {
     this.router.get(this.path.concat('search'), this.searchPronunciation);
+    this.router.get(this.path.concat('find-words'), this.findWords);
     this.router.get(this.path.concat('lessons/:lesson'), this.getDictionariesFromSheet);
     this.router.get(this.path.concat('lessons'), this.getLessonsController);
   }
@@ -140,7 +145,7 @@ export class OxfordController {
     try {
       if (regex.test(word) === true) {
         const oxfordResponse = await axios.get<Oxford>(
-          `https://od-api.oxforddictionaries.com/api/v2/entries/en-us/${word}?fields=pronunciations`,
+          `${this.oxfordApiUrl}/entries/en-us/${word}?fields=pronunciations`,
           { headers: this.oxfordAxiosHeader }
         );
         return oxfordResponse.data;
@@ -217,5 +222,29 @@ export class OxfordController {
   private getLessonsController = async (req: Request, res: Response): Promise<Response> => {
     const lessons = await this.getLessons();
     return res.send(lessons);
+  };
+
+  private findWords = async (req: Request, res: Response): Promise<Response> => {
+    try {
+      const word = req.query.word as string;
+
+      if(word == null || word === '') {
+        return res.send([]);
+      }
+
+      if (this.findWordsCache[word]) {
+        return res.send(this.findWordsCache[word].results);
+      }
+
+      const search = await axios.get<OxfordResponse<Thesaurus>>(
+        `${this.oxfordApiUrl}/search/thesaurus/en?q=${word}&prefix=true&limit=10`,
+        { headers: this.oxfordAxiosHeader }
+      );
+      this.findWordsCache[word] = search.data;
+      return res.send(search.data.results);
+    } catch (error) {
+      console.log(error);
+      return res.send([]);
+    }
   };
 }

@@ -1,10 +1,17 @@
 import { Vocabulary } from './vocabulary';
 
 /** Oxford. */
-export interface Oxford {
+export interface Oxford extends OxfordResponse<Vocabulary> {
 
   /** Word that is inputted to API. */
   readonly id: string;
+
+  /** Word. */
+  readonly word: string;
+
+}
+
+export interface OxfordResponse<T> {
 
   /** Metadata. */
   readonly metadata: {
@@ -20,9 +27,5 @@ export interface Oxford {
   };
 
   /** Vocabularies. */
-  readonly results: readonly Vocabulary[];
-
-  /** Word. */
-  readonly word: string;
-
+  readonly results: readonly T[];
 }
