@@ -248,7 +248,7 @@ export class OxfordController {
       }
 
       const search = await axios.get<OxfordResponse<Thesaurus>>(
-        `${this.oxfordApiUrl}/search/thesaurus/en?q=${word}&prefix=true&limit=10`,
+        `${this.oxfordApiUrl}/search/thesaurus/en?q=${word}&prefix=true&limit=5`,
         { headers: this.oxfordAxiosHeader }
       );
       this.findWordsCache[word] = search.data;
