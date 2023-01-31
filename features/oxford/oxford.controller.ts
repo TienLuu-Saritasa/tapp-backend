@@ -107,8 +107,12 @@ export class OxfordController {
       if (existWord.oxford.results.length === 0) {
         const newOxford = await this.getOxfordDictionary(word);
         existWord.oxford = { ...newOxford };
-        await existWord.save();
-        return { ...existWord, oxford: newOxford };
+        const result = await DictionaryModel.findOneAndUpdate(
+          {word: word}, 
+          {$set: {oxford: newOxford}}, 
+          { new: true }
+        );
+        return { ...existWord, ...result?.toObject() };
       }
       return existWord;
     }
