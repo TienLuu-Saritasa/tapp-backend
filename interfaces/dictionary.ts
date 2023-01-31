@@ -8,7 +8,7 @@ export interface Dictionary {
   readonly word: string;
 
   /** Oxford. */
-  readonly oxford: Oxford;
+  oxford: Oxford;
 
   /** Translator. */
   readonly tracau: readonly TraCau[];

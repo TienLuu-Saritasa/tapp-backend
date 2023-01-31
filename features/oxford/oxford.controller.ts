@@ -103,8 +103,15 @@ export class OxfordController {
 
       return result;
 
+    } else {
+      if (existWord.oxford.results.length === 0) {
+        const newOxford = await this.getOxfordDictionary(word);
+        existWord.oxford = { ...newOxford };
+        await existWord.save();
+        return { ...existWord, oxford: newOxford };
+      }
+      return existWord;
     }
-    return existWord;
   };
 
   private translatePronunciation = async (word: string): Promise<TraCau[]> => {
@@ -228,7 +235,7 @@ export class OxfordController {
     try {
       const word = req.query.word as string;
 
-      if(word == null || word === '') {
+      if (word == null || word === '') {
         return res.send([]);
       }
 
