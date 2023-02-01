@@ -241,7 +241,7 @@ export class OxfordController {
       if (word == null || word === '') {
         return res.send([]);
       }
-      const words = await DictionaryModel.find({ word: { $regex: '.*' + word.toLocaleLowerCase() + '.*' } }).limit(5).exec();
+      const words = await DictionaryModel.find({ word: { $regex: '.*' + word + '.*', $options: 'i' } }).limit(5).exec();
       return res.send(words);
     } catch (error) {
       console.log(error);
