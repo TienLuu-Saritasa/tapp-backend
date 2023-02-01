@@ -30,7 +30,6 @@ export class OxfordController {
   private readonly envService = new EnvService();
   private readonly googleSheetService: sheets_v4.Sheets;
   private readonly oxfordAxiosHeader: RawAxiosRequestHeaders;
-  private readonly findWordsCache: Record<string, OxfordResponse<Thesaurus>> = {};
 
   public constructor() {
     this.initializeRoutes();
@@ -242,17 +241,8 @@ export class OxfordController {
       if (word == null || word === '') {
         return res.send([]);
       }
-
-      if (this.findWordsCache[word]) {
-        return res.send(this.findWordsCache[word].results);
-      }
-
-      const search = await axios.get<OxfordResponse<Thesaurus>>(
-        `${this.oxfordApiUrl}/search/thesaurus/en?q=${word}&prefix=true&limit=5`,
-        { headers: this.oxfordAxiosHeader }
-      );
-      this.findWordsCache[word] = search.data;
-      return res.send(search.data.results);
+      const words = await DictionaryModel.find({ word: { $regex: '.*' + word + '.*' } }).limit(5).exec();
+      return res.send(words);
     } catch (error) {
       console.log(error);
       return res.send([]);
