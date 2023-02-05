@@ -220,6 +220,8 @@ export class OxfordController {
       this.toRangeForLesson('C122', 'H139'),
       this.toRangeForLesson('C140', 'H164'),
       this.toRangeForLesson('C165', 'H171'),
+      this.toRangeForLesson('C172', 'H176'),
+      this.toRangeForLesson('C177', 'H188'),
     ];
     const lessonNames = await this.getSheetData(this.toRangeForLesson('A2', 'A500'));
     return lessonNames.map((name, index) => ({
